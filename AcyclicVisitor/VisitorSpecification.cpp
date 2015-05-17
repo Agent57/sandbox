@@ -1,5 +1,3 @@
-#include <stdexcept>
-
 #include "CppUnitTest.h"
 #include "TestObjectReportVisitor.h"
 #include "TestObjectWrapper.h"
@@ -11,45 +9,45 @@ namespace Specification
 	TEST_CLASS(VisitorSpecification)
 	{
 	public:
-		
-    TEST_METHOD(TestMethod1)
+    TEST_METHOD(Using_an_invalid_visitor_throws_a_bad_cast_exception)
     {
       TestObject testObject;
-      testObject.number = 1234;
-      testObject.text = "Hello World";
-
-      auto wrapper = TestObjectWrapper::Create(testObject);
+      IObjectWrapperPtr wrapper = TestObjectWrapper::Create(testObject);
 
       try
       {
-        wrapper->Accept(NULL);
+        AcceptTestVisitor(wrapper, NULL);
       }
-      catch (std::bad_cast& exception)
+      catch (std::bad_cast&)
       {
         return;
       }
+      catch (...) {}
 
       Assert::Fail(L"Bad cast expected");
     }
 
-    TEST_METHOD(TestMethod2)
+    TEST_METHOD(A_TestObjectNumberVisitor_validates_the_number_field)
     {
       TestObject testObject;
       testObject.number = 1234;
-      testObject.text = "Hello World";
-
-      auto wrapper = TestObjectWrapper::Create(testObject);
-      auto visitor = TestObjectReportVisitor::Create();
-
-      try
-      {
-        wrapper->Accept(visitor);
-      }
-      catch (std::bad_cast& exception)
-      {
-        Assert::Fail(L"Bad cast exception");
-      }
+      IObjectWrapperPtr wrapper = TestObjectWrapper::Create(testObject);
+      
+      AcceptTestVisitor(wrapper, TestObjectNumberVisitor::Create());
     }
 
+    TEST_METHOD(A_TestObjectTextVisitor_validates_the_text_field)
+    {
+      TestObject testObject;
+      testObject.text = "Hello World";
+      IObjectWrapperPtr wrapper = TestObjectWrapper::Create(testObject);
+
+      AcceptTestVisitor(wrapper, TestObjectTextVisitor::Create());
+    }
+
+    void AcceptTestVisitor(const IObjectWrapperPtr& wrapper, const IVisitorPtr& visitor)
+    {
+      wrapper->Accept(visitor);
+    }
   };
 }

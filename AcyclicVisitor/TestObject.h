@@ -7,4 +7,10 @@ class TestObject
 public:
   int number;
   std::string text;
+
+  TestObject()
+    : number(0)
+    , text("")
+  {
+  }
 };

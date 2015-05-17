@@ -10,9 +10,10 @@ class TestObjectWrapper : public IObjectWrapper
   TestObject m_object;
 
 public:
-  typedef std::shared_ptr<TestObjectWrapper> TestObjectWrapperPtr;
-
-  TestObjectWrapper(const TestObject& object) : m_object(object) {}
+  TestObjectWrapper(const TestObject& object)
+    : m_object(object)
+  {
+  }
 
   virtual void Accept(const IVisitorPtr& visitor) const
   {
